@@ -16,7 +16,7 @@ class Api::V1::UsersController < ApplicationController
     if user.save
       render json: user, status: :ok
     else
-      render json: {message: 'user not add '}, status: :unprocessable_entity
+      render json: {message: 'user not add ', errors: user.errors}, status: :unprocessable_entity
     end
   end
 
@@ -26,7 +26,7 @@ class Api::V1::UsersController < ApplicationController
       if @user.update(user_params)
         render json: @user, status: :ok
       else
-        render json: {msg: 'Updated failed'}, status: :unprocessable_entity
+        render json: {msg: 'Updated failed', errors: @user.errors}, status: :unprocessable_entity
       end
     else
       render json: {msg: 'User not find'}, status: :unprocessable_entity
