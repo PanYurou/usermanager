@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   namespace :api do
+    namespace :auth do
+      post 'login', action: :login, controller: :auth
+    end
     namespace :v1 do
       get 'get_users', action: :get_users, controller: :users
       get 'show_user', action: :show_user, controller: :users
