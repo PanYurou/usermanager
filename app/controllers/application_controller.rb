@@ -9,16 +9,21 @@ class ApplicationController < ActionController::API
     generate_token(user_id, user_name, user_type)
   end
 
-  def check_auth(return_user = false)
+  def check_token(user_type = 1, return_user = false)
     user_token = decrypt_token request.headers['token']
-    if token
+    if user_token
       # token 过期
-      if user_token[:ex_time] < Time.now
+      if user_token[:token_ex].to_i < Time.now.to_i
         render json: {msg: 'Token Expired'}, status: :unauthorized
       else
-        user = User.find_by user_token[:user_id]
+        user = User.find user_token[:user_id]
+        if user[:type].to_i != user_type
+          render json: {msg: 'Unauthorized You type is not 1'}, status: :unauthorized
+          return false
+        end
+
         if user
-          render json: {msg: 'User Unauthorized'}, status: :ok if return_user
+          render json: user, status: :ok if return_user
           return true
         else
           render json: {msg: 'not Unauthorized'}, status: :unauthorized

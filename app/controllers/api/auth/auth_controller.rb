@@ -9,7 +9,7 @@ class Api::Auth::AuthController < ApplicationController
 
     if user
       if user.authenticate(params[:password])
-        token = self.create_token(user.id, user.username, user.type.to_s)
+        token = create_token(user.id, user.username, user.type.to_s)
         user.set token: token
         render json: {msg: 'sucessful login',
                       user: user.as_json(except: [:password_digest])}, status: :ok
