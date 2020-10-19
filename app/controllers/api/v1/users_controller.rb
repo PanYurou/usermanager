@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :get_user, only: [:update_user, :delete_user, :show_user]
-  before_action only: [:update_user, :delete_user] do
+  before_action :get_user, only: %i[update_user delete_user show_user]
+  before_action only: %i[update_user delete_user] do
     check_token(2)
   end
 
@@ -9,7 +9,10 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def get_users
-    users = User.all
+    users = User.all.map do |u|
+      u.as_json(except: %i[password_digest _id token]
+      ).merge({id: u._id.to_s})
+    end
     if users
       render json: users, status: :ok
     else
