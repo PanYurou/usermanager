@@ -18,4 +18,8 @@ class Api::Auth::AuthController < ApplicationController
       end
     end
   end
+
+  def checking_token
+    check_token(1, true, true)
+  end
 end
