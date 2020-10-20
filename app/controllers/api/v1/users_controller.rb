@@ -36,7 +36,7 @@ class Api::V1::UsersController < ApplicationController
   def add_user
     user = User.new(user_params)
     if user.save
-      render json: user, status: :ok
+      render json: user.as_json(except: [:password_digest]).merge(id: user.id.to_s), status: :ok
     else
       render json: {message: 'user not add ', errors: user.errors}, status: :unprocessable_entity
     end
