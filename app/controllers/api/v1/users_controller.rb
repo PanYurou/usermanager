@@ -9,12 +9,24 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def get_users
-    users = User.all.map do |u|
+    limit = params[:limit] || 10
+    page = params[:page] || 1
+    offset = page == 1 ? 0 : limit.to_i * (page.to_i - 1)
+    query = [{
+                 username: /.*#{params[:search]}.*/
+             },
+             {
+                 email: /.*#{params[:search]}.*/
+             },
+             {
+                 id: params[:search]
+             }]
+    users = User.any_of(query).limit(limit).offset(offset).map do |u|
       u.as_json(except: %i[password_digest _id token]
       ).merge({id: u._id.to_s})
     end
     if users
-      render json: users, status: :ok
+      render json: {limit: limit, page: page, data: users}, status: :ok
     else
       render json: {msg: 'users empty'}, status: :unprocessable_entity
     end
